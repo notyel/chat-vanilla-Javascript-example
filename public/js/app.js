@@ -1,5 +1,5 @@
 const API_KEY = "";
-const submitButton = document.querySelector("#submit");
+const submitButton = document.querySelector("#send-message-button");
 const outPutElement = document.querySelector("#output");
 const inPutElement = document.querySelector("input");
 const historyElement = document.querySelector(".history");

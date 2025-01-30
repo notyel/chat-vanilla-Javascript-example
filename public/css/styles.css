@@ -73,7 +73,7 @@ input:focus {
   max-width: 650px;
 }
 
-.input-container #submit {
+.input-container #send-message-button {
   position: absolute;
   right: 0;
   bottom: 15px;
