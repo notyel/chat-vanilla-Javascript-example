@@ -196,6 +196,10 @@ button {
   padding: 10px;
 }
 
+.math-pending {
+  visibility: hidden;
+}
+
 /* Responsive para móviles */
 @media (max-width: 600px) {
   .message {
