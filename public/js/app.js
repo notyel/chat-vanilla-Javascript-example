@@ -1,4 +1,6 @@
 
+import { parseLLMText } from "./textParser.js";
+
   const sendButton = document.querySelector("#send-message-button");
   const input = document.querySelector("input");
   const output = document.querySelector("#output");
@@ -7,14 +9,14 @@
   async function getMessage() {
     const userMessage = input.value.trim();
     if (!userMessage) return;
-
+  
     // Agrega el mensaje del usuario al historial
     addMessage("user", userMessage);
-
-    // Mostrar mensaje de carga
-    const loadingMessage = addMessage("assistant", "Cargando...");
+  
+    // Crear el contenedor del mensaje del asistente
+    const loadingMessage = addMessage("assistant", "");
     loadingMessage.classList.add("loading");
-
+  
     const options = {
       method: "POST",
       headers: {
@@ -28,28 +30,61 @@
             content: userMessage
           }
         ],
-        "max_tokens": 540
+        max_tokens: 540,
+        stream: true
       })
     };
-
+  
     try {
       const response = await fetch("http://127.0.0.1:1234/v1/chat/completions", options);
-      const data = await response.json();
-      const assistantReply = data.choices?.[0]?.message?.content || "Sin respuesta.";
+  
+      if (!response.ok || !response.body) {
+        throw new Error("La respuesta no es válida.");
+      }
+  
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+  
+      let assistantReply = "";
+  
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+  
+        const chunk = decoder.decode(value, { stream: true });
+  
+        // Procesar el stream línea por línea
+        const lines = chunk.split("\n").filter(line => line.trim().startsWith("data:"));
+        for (const line of lines) {
+          const jsonStr = line.replace(/^data:\s*/, "");
+  
+          if (jsonStr === "[DONE]") break;
+  
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              assistantReply += content;
+              loadingMessage.innerHTML = parseLLMText(assistantReply);
 
-      // Reemplaza el mensaje de "Cargando..." por la respuesta real
-      loadingMessage.textContent = assistantReply;
+              scrollToBottom();
+            }
+          } catch (e) {
+            console.warn("Error al parsear JSON del stream:", e);
+          }
+        }
+      }
+  
       loadingMessage.classList.remove("loading");
-      scrollToBottom();
     } catch (error) {
       console.error("Error:", error);
       loadingMessage.textContent = "Error al obtener respuesta.";
       loadingMessage.classList.remove("loading");
     }
-
+  
     input.value = "";
   }
-
+  
   function addMessage(role, text) {
     const messageEl = document.createElement("div");
     messageEl.classList.add("message", role);
