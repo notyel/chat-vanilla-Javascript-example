@@ -63,21 +63,34 @@ h1 {
 #chat-section {
   flex-grow: 1;
   overflow-y: auto;
-  padding: 20px;
   width: 100%;
   display: flex;
   justify-content: center;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+#chat-section::-webkit-scrollbar {
+  width: 6px;
+}
+
+#chat-section::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#chat-section::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
 }
 
 #output {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 10px;
+  gap: 16px;
   width: 100%;
   max-width: 800px;
-  overflow-y: auto;
-  border-radius: 8px;
+  padding: 10px 20px 30px;
+  overflow-anchor: auto;
 }
 
 .message {
@@ -90,15 +103,17 @@ h1 {
 }
 
 .user {
-  background-color: rgba(52, 168, 255, 0.2);
+  background-color: #2d7fd3;
   align-self: flex-end;
   text-align: right;
+  color: #fff;
 }
 
 .assistant {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: #444654;
   align-self: flex-start;
   text-align: left;
+  color: #e8e8e8;
 }
 
 .loading {
@@ -122,26 +137,49 @@ h1 {
 }
 
 .input-container input {
-  width: 100%;
-  font-size: 18px;
-  padding: 14px 50px 14px 15px;
-  border-radius: 6px;
+  background-color: #40414f;
   border: none;
-  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  font-size: 16px;
+  padding: 14px 50px 14px 16px;
   color: #fff;
+  transition: background 0.3s ease;
+  width: 100%;
 }
 
 .input-container input:focus {
   outline: none;
+  background-color: #4e4f60;
 }
 
 .input-container #send-message-button {
   position: absolute;
-  right: 15px;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  color: rgba(255, 255, 255, 0.7);
+  width: 36px;
+  height: 36px;
+  background-color: #2d7fd3;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.input-container #send-message-button:hover {
+  background-color: #1b61ad;
+}
+
+.input-container #send-message-button i {
+  color: white;
+  font-size: 16px;
+}
+
+.message,
+.input-container input {
+  transition: all 0.3s ease;
 }
 
 button {
@@ -169,12 +207,11 @@ button {
     font-size: 16px;
   }
 
-  .bottom-section {
-    display: none;
-    /* Oculta la caja de texto en pantallas pequeñas */
-  }
-
   .main {
     padding-bottom: 0;
+  }
+
+  .info {
+    text-align: center;
   }
 }

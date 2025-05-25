@@ -2,6 +2,7 @@
   const sendButton = document.querySelector("#send-message-button");
   const input = document.querySelector("input");
   const output = document.querySelector("#output");
+  const chatSection = document.querySelector("#chat-section");
 
   async function getMessage() {
     const userMessage = input.value.trim();
@@ -54,14 +55,14 @@
     messageEl.classList.add("message", role);
     messageEl.textContent = text;
     output.appendChild(messageEl);
-
-    // Desplazar hacia abajo para mostrar el nuevo mensaje
+   
     scrollToBottom();
     return messageEl;
   }
 
+  // Desplazar hacia abajo para mostrar el nuevo mensaje
   function scrollToBottom() {
-    output.scrollTop = output.scrollHeight;
+    chatSection.scrollTop = chatSection.scrollHeight;
   }
 
   sendButton.addEventListener("click", getMessage);
