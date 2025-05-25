@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Este repositorio contiene un ejemplo básico de una aplicación de chat en tiempo real construida con JavaScript puro (vanilla JS). El proyecto ilustra cómo implementar funcionalidades de chat sin utilizar frameworks o librerías externas, enfocándose en el uso de tecnologías web estándar como HTML5, CSS3, y JavaScript.",
   "main": "src/app.js",
-"scripts": {
-    "start": "http-server public"
+  "scripts": {
+    "start": "live-server public --no-browser-cache"
   },
   "repository": {
     "type": "git",
@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/notyel/chat-vanilla-Javascript-example#readme",
   "devDependencies": {
-    "http-server": "^14.1.1"
+    "live-server": "^1.2.2"
   }
 }
