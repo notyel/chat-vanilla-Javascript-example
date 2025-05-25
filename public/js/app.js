@@ -1,68 +1,71 @@
-const API_KEY = "";
-const submitButton = document.querySelector("#send-message-button");
-const outPutElement = document.querySelector("#output");
-const inPutElement = document.querySelector("input");
-const historyElement = document.querySelector(".history");
-const buttonElement = document.querySelector("button");
 
-function changeInput(value) {
-  const inputElement = document.querySelector("input");
-  inputElement.value = value;
-}
+  const sendButton = document.querySelector("#send-message-button");
+  const input = document.querySelector("input");
+  const output = document.querySelector("#output");
 
-async function getMessage() {
-  console.log(
-    `Button clicked: Fetching message from API with input: ${inPutElement.value}`
-  );
+  async function getMessage() {
+    const userMessage = input.value.trim();
+    if (!userMessage) return;
 
-  const options = {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "user",
-          content: inPutElement.value,
-        },
-      ],
-      max_tokens: 100,
-    }),
-  };
+    // Agrega el mensaje del usuario al historial
+    addMessage("user", userMessage);
 
-  try {
-    const response = await fetch(
-      "https://api.openai.com/v1/chat/completions",
-      options
-    );
-    const data = await response.json();
+    // Mostrar mensaje de carga
+    const loadingMessage = addMessage("assistant", "Cargando...");
+    loadingMessage.classList.add("loading");
 
-    console.log(`API response received: `, data);
-    outPutElement.textContent = data.choices[0].message.content;
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "microsoft/phi-4",
+        messages: [
+          {
+            role: "user",
+            content: userMessage
+          }
+        ],
+        max_tokens: 100
+      })
+    };
 
-    if (data.choices[0].message.content && inPutElement.value) {
-      const pElement = document.createElement("p");
-      pElement.textContent = inPutElement.value;
-      pElement.addEventListener("click", () =>
-        changeInput(pElement.textContent)
-      );
+    try {
+      const response = await fetch("http://127.0.0.1:1234/v1/chat/completions", options);
+      const data = await response.json();
+      const assistantReply = data.choices?.[0]?.message?.content || "Sin respuesta.";
 
-      historyElement.append(pElement);
-      console.log(`Added to history: ${inPutElement.value}`);
+      // Reemplaza el mensaje de "Cargando..." por la respuesta real
+      loadingMessage.textContent = assistantReply;
+      loadingMessage.classList.remove("loading");
+      scrollToBottom();
+    } catch (error) {
+      console.error("Error:", error);
+      loadingMessage.textContent = "Error al obtener respuesta.";
+      loadingMessage.classList.remove("loading");
     }
-  } catch (error) {
-    console.error(`Error fetching message from API:`, error);
+
+    input.value = "";
   }
-}
 
-submitButton.addEventListener("click", getMessage);
+  function addMessage(role, text) {
+    const messageEl = document.createElement("div");
+    messageEl.classList.add("message", role);
+    messageEl.textContent = text;
+    output.appendChild(messageEl);
 
-function clearInput() {
-  console.log(`Input cleared.`);
-  inPutElement.value = "";
-}
+    // Desplazar hacia abajo para mostrar el nuevo mensaje
+    scrollToBottom();
+    return messageEl;
+  }
 
-buttonElement.addEventListener("click", clearInput);
+  function scrollToBottom() {
+    output.scrollTop = output.scrollHeight;
+  }
+
+  sendButton.addEventListener("click", getMessage);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") getMessage();
+  });
+
