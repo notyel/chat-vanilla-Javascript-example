@@ -1,4 +1,5 @@
-import { parseLLMText, sanitizeMathContent } from "./textParser.js";
+import { sanitizeMathContent } from "./textParser.js";
+import { marked } from "./libs/marked/marked.esm.js";
 
 const sendButton = document.querySelector("#send-message-button");
 const input = document.querySelector("input");
@@ -15,7 +16,6 @@ async function getMessage() {
   // Crear el contenedor del mensaje del asistente
   const loadingMessage = addMessage("assistant", "");
   loadingMessage.classList.add("loading");
-  loadingMessage.classList.add("math-pending");
 
   const options = {
     method: "POST",
@@ -49,6 +49,7 @@ async function getMessage() {
     const decoder = new TextDecoder("utf-8");
 
     let assistantReply = "";
+    let firstChunkReceived = false;
 
     while (true) {
       const { done, value } = await reader.read();
@@ -56,10 +57,10 @@ async function getMessage() {
 
       const chunk = decoder.decode(value, { stream: true });
 
-      // Procesar el stream línea por línea
       const lines = chunk
         .split("\n")
         .filter((line) => line.trim().startsWith("data:"));
+
       for (const line of lines) {
         const jsonStr = line.replace(/^data:\s*/, "");
 
@@ -68,19 +69,26 @@ async function getMessage() {
         try {
           const parsed = JSON.parse(jsonStr);
           const content = parsed.choices?.[0]?.delta?.content;
+
           if (content) {
             assistantReply += content;
-            const cleaned = sanitizeMathContent(assistantReply);
-            loadingMessage.innerHTML = parseLLMText(cleaned);
+            const cleaned = sanitizeMathContent(assistantReply, {
+              sanitize: false,
+            });
 
+            loadingMessage.innerHTML = marked.parse(cleaned);
             scrollToBottom();
 
-            // Renderiza LaTeX si está presente
+            // Quitar clase "loading" al recibir el primer fragmento
+            if (!firstChunkReceived) {
+              firstChunkReceived = true;
+              loadingMessage.classList.remove("loading");
+            }
+
+            // Render LaTeX si aplica
             if (window.MathJax) {
               await MathJax.typesetClear([loadingMessage]);
               await MathJax.typesetPromise([loadingMessage]);
-
-              loadingMessage.classList.remove("math-pending");
               scrollToBottom();
             }
           }
@@ -89,8 +97,6 @@ async function getMessage() {
         }
       }
     }
-
-    loadingMessage.classList.remove("loading");
   } catch (error) {
     console.error("Error:", error);
     loadingMessage.textContent = "Error al obtener respuesta.";
@@ -103,11 +109,16 @@ async function getMessage() {
 function addMessage(role, text) {
   const messageEl = document.createElement("div");
   messageEl.classList.add("message", role);
-  messageEl.textContent = text;
+
+  const contentEl = document.createElement("div");
+  contentEl.classList.add("message-content");
+  contentEl.textContent = text;
+
+  messageEl.appendChild(contentEl);
   output.appendChild(messageEl);
 
   scrollToBottom();
-  return messageEl;
+  return contentEl;
 }
 
 // Desplazar hacia abajo para mostrar el nuevo mensaje

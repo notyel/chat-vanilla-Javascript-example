@@ -28,6 +28,7 @@
     />
     <link rel="icon" href="favicon.ico" />
     <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/assistant-response.css" />
     <link rel="stylesheet" href="css/all.min.css" />
   </head>
   <body>
@@ -71,20 +72,18 @@
     <script>
       window.MathJax = {
         tex: {
-          inlineMath: [
-            ["$", "$"],
-            ["\\(", "\\)"],
-          ],
-          displayMath: [
-            ["\\[", "\\]"],
-            ["$$", "$$"],
-          ],
+          inlineMath: [["$", "$"]],
+          displayMath: [["$$", "$$"]],
         },
         startup: {
           typeset: false,
         },
       };
     </script>
-    <script id="MathJax-script" async src="js/tex-mml-chtml.js"></script>
+    <script
+      id="MathJax-script"
+      async
+      src="js/libs/mathjax/tex-mml-chtml.js"
+    ></script>
   </body>
 </html>

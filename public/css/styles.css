@@ -94,26 +94,40 @@ h1 {
 }
 
 .message {
-  margin: 5px 0;
-  padding: 10px;
-  border-radius: 6px;
-  max-width: 100%;
-  word-wrap: break-word;
+  line-height: 1.5;
+  display: flex;
+  padding: 4px 0;
+}
+
+.message.user {
+  justify-content: flex-end;
+}
+
+.message.assistant {
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.message-content {
+  padding: 12px 16px;
+  border-radius: 1.5rem;
   white-space: pre-wrap;
+  word-wrap: break-word;
+  background-color: inherit;
+  color: inherit;
 }
 
-.user {
-  background-color: #2d7fd3;
-  align-self: flex-end;
-  text-align: right;
-  color: #fff;
-}
-
-.assistant {
-  background-color: #444654;
-  align-self: flex-start;
-  text-align: left;
+.message.assistant .message-content {
+  width: 100%;
+  /*background-color: #444654;*/
   color: #e8e8e8;
+}
+
+.message.user .message-content {
+  max-width: 70%;
+  background-color: #2d7fd3;
+  color: #fff;
+  text-align: right;
 }
 
 .loading {
@@ -194,10 +208,6 @@ button {
   color: rgba(255, 255, 255, 0.5);
   font-size: 11px;
   padding: 10px;
-}
-
-.math-pending {
-  visibility: hidden;
 }
 
 /* Responsive para móviles */

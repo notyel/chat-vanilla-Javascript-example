@@ -1,0 +1,207 @@
+:root {
+    --spacing: .25rem;
+    --line-height: 1.5;
+    --white: #fff;
+    --black: #000;
+    --gray-50: #f9f9f9;
+    --gray-100: #ececec;
+    --gray-200: #e3e3e3;
+    --gray-300: #cdcdcd;
+    --gray-400: #b4b4b4;
+    --gray-500: #9b9b9b;
+    --gray-600: #676767;
+    --gray-700: #424242;
+    --gray-750: #2f2f2f;
+    --gray-800: #212121;
+    --gray-900: #171717;
+    --gray-940: #1e1e1e;
+    --gray-950: #0d0d0d;
+    --red-500: #e02e2a;
+    --red-700: #911e1b;
+    --brand-purple: #ab68ff;
+    --yellow-900: #4d3b00;
+}
+
+.message-content {
+    line-height: var(--line-height);
+}
+
+/* Títulos h1 a h6 para jerarquía visual */
+.message.assistant h1,
+.message.assistant h2,
+.message.assistant h3,
+.message.assistant h4,
+.message.assistant h5,
+.message.assistant h6 {
+    font-weight: 700;
+    margin-bottom: calc(var(--spacing) * 2);
+    margin-top: calc(var(--spacing) * 4);
+    color: #e6e6e6;
+    line-height: 1.15;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+/* Tamaños de títulos */
+.message.assistant h1 {
+    font-size: 2.1em;
+}
+
+.message.assistant h2 {
+    font-size: 1.7em;
+}
+
+.message.assistant h3 {
+    font-size: 1.35em;
+}
+
+.message.assistant h4 {
+    font-size: 1.15em;
+}
+
+.message.assistant h5 {
+    font-size: 1em;
+}
+
+.message.assistant h6 {
+    font-size: 0.9em;
+}
+
+/* Párrafos */
+.message.assistant p {
+    margin: 0.3em 0;
+    color: #dcdcdc;
+    font-size: 1em;
+    line-height: var(--line-height);
+}
+
+.message.assistant li>p {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+
+/* Negrita y cursiva */
+.message.assistant strong {
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+.message.assistant em {
+    font-style: italic;
+    color: #bdbdbd;
+}
+
+/* Código en línea */
+.message.assistant code {
+    background-color: var(--gray-940);
+    color: #f8f8f2;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95em;
+    padding: 0.1em 0.2em;
+    border-radius: 4px;
+    margin-right: 3px;
+}
+
+/* Bloques de código (pre) */
+.message.assistant pre {
+    background-color: var(--gray-940);
+    color: #f8f8f2;
+    padding: 0.75em 1em;
+    border-radius: 5px;
+    overflow-x: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+    margin: 0.8em 0;
+}
+
+.message.assistant pre code {
+    background: transparent;
+    color: inherit;
+    font-size: 1em;
+    padding: 0;
+    border-radius: 0;
+}
+
+/* Listas */
+.message.assistant ul,
+.message.assistant ol {
+    margin: 0 0 0.4em 1.5em;
+    padding-left: 0;
+    color: #cccccc;
+    font-size: 1em;
+    line-height: var(--line-height);
+    list-style-position: outside;
+}
+
+/* Bullets personalizados para ul */
+.message.assistant ul {
+    list-style-type: none;
+}
+
+.message.assistant ul>li::before {
+    content: "•";
+    color: #eef0f3;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1.5em;
+    font-weight: bold;
+    font-size: 1.1em;
+    line-height: var(--line-height);
+    vertical-align: middle;
+}
+
+/* Números personalizados para ol */
+.message.assistant ol {
+    list-style-type: none;
+    counter-reset: custom-counter;
+}
+
+.message.assistant ol>li {
+    counter-increment: custom-counter;
+    position: relative;
+    padding-left: 2em;
+}
+
+.message.assistant ol>li::before {
+    content: counter(custom-counter) ".";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #eef0f3;
+    font-weight: 700;
+    font-size: 1em;
+    line-height: var(--line-height);
+}
+
+/* Listas anidadas con menor indentación */
+.message.assistant ul ul,
+.message.assistant ol ol,
+.message.assistant ul ol,
+.message.assistant ol ul {
+    margin-left: 1.3em;
+}
+
+/* List items con menos margen vertical */
+.message.assistant ul li,
+.message.assistant ol li {
+    margin: 0.15em 0;
+}
+
+/* Enlaces */
+.message.assistant a {
+    color: #5a9bf6;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.message.assistant a:hover,
+.message.assistant a:focus {
+    color: #81aaff;
+    text-decoration: none;
+    outline: none;
+}
+
+/* Separadores entre secciones (menos espacio) */
+.message.assistant>*+* {
+    margin-top: 0.5em;
+}
