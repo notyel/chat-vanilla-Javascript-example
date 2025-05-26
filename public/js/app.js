@@ -77,6 +77,9 @@ async function getMessage() {
             });
 
             loadingMessage.innerHTML = marked.parse(cleaned);
+            hljs.highlightAll();
+
+            labelCodeBlocks(loadingMessage);
             scrollToBottom();
 
             // Quitar clase "loading" al recibir el primer fragmento
@@ -124,6 +127,28 @@ function addMessage(role, text) {
 // Desplazar hacia abajo para mostrar el nuevo mensaje
 function scrollToBottom() {
   chatSection.scrollTop = chatSection.scrollHeight;
+}
+
+function labelCodeBlocks(context = document) {
+  context.querySelectorAll("pre code").forEach((codeBlock) => {
+    const pre = codeBlock.parentElement;
+
+    // Verificar si ya tiene etiqueta de lenguaje
+    if (pre.querySelector(".lang-label")) return;
+
+    const className = codeBlock.className;
+    const match = className.match(/language-(\w+)/);
+    if (match) {
+      const lang = match[1].toUpperCase();
+
+      const label = document.createElement("div");
+      label.className = "lang-label";
+      label.textContent = lang;
+
+      pre.style.position = "relative";
+      pre.insertBefore(label, codeBlock);
+    }
+  });
 }
 
 sendButton.addEventListener("click", getMessage);

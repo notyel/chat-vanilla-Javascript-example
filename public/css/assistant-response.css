@@ -96,7 +96,7 @@
 .message.assistant code {
     background-color: var(--gray-940);
     color: #f8f8f2;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "JetBrains Mono", monospace;
     font-size: 0.95em;
     padding: 0.1em 0.2em;
     border-radius: 4px;
@@ -106,15 +106,18 @@
 /* Bloques de código (pre) */
 .message.assistant pre {
     background-color: var(--gray-940);
-    color: #f8f8f2;
     padding: 0.75em 1em;
     border-radius: 5px;
     overflow-x: auto;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
-    margin: 0.8em 0;
+    font-size: .875rem;
+    line-height: 1.25rem;
+    font-family: "Fira Code", "Roboto Mono", "Inconsolata", monospace;
+    font-feature-settings: normal;
+    font-variation-settings: normal;
 }
 
 .message.assistant pre code {
+    font-family: "JetBrains Mono", monospace;
     background: transparent;
     color: inherit;
     font-size: 1em;
@@ -187,6 +190,10 @@
     margin: 0.15em 0;
 }
 
+.message.assistant ol li pre {
+    margin-top: 20px;
+}
+
 /* Enlaces */
 .message.assistant a {
     color: #5a9bf6;
@@ -204,4 +211,24 @@
 /* Separadores entre secciones (menos espacio) */
 .message.assistant>*+* {
     margin-top: 0.5em;
+}
+
+.lang-label {
+    text-transform: uppercase;
+    position: absolute;
+    top: 24px;
+    right: 0;
+    transform: translateY(-100%);
+    background-color: rgba(0, 0, 0, .3);
+    color: #fff;
+    padding-top: .25rem;
+    padding-bottom: .25rem;
+    padding-left: 1rem;
+    padding-right: 1.5rem;
+    font-size: .75rem;
+    line-height: 1rem;
+    font-family: monospace;
+    font-weight: 700;
+    border-bottom-left-radius: .375rem;
+    pointer-events: none;
 }
