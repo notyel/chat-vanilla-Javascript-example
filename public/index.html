@@ -4,39 +4,88 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Javascript ChatGPT Clon</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png" />
+    <title>ChatGPT Clon</title>
+    <meta name="description" content="ChatGPT Clon" />
+    <meta name="keywords" content="ChatGPT, Javascript, Clon" />
+    <meta name="author" content="Leyton M. Espitia Diaz" />
+    <meta name="robots" content="index, follow" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="img/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="img/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="img/favicon-16x16.png"
+    />
     <link rel="icon" href="favicon.ico" />
     <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/assistant-response.css" />
+    <link rel="stylesheet" href="css/all.min.css" />
+    <link rel="stylesheet" href="css/highlight/default.min.css" />
   </head>
   <body>
     <aside class="side-bar">
       <button>Nuevo Chat</button>
       <div class="history"></div>
-      <footer><p>Hecho por Leyton</p></footer>
+      <footer><p>Hecho por Leyton M. Espitia Diaz</p></footer>
     </aside>
     <main class="main">
       <header>
-        <h1>GPT</h1>
+        <h1>Chat IA</h1>
       </header>
-      <section>
-        <p id="output"></p>
+
+      <section id="chat-section">
+        <div id="output"></div>
       </section>
+
       <div class="bottom-section">
         <div class="input-container">
-          <input type="text" />
-          <div id="submit">➢</div>
+          <input
+            type="text"
+            id="input"
+            placeholder="Pregunta lo que quieras..."
+            autocomplete="off"
+          />
+          <div id="send-message-button" aria-label="Enviar mensaje">
+            <i class="fas fa-paper-plane"></i>
+          </div>
         </div>
       </div>
+
       <footer>
         <p class="info">
-          ChatGPT puede cometer errores. Considera verificar la información
+          ChatIA puede cometer errores. Considera verificar la información
           importante.
         </p>
       </footer>
     </main>
-    <script src="js/app.js"></script>
+
+    <script src="js/libs/highlight/highlight.min.js"></script>
+    <script type="module" src="js/app.js"></script>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [["$", "$"]],
+          displayMath: [["$$", "$$"]],
+        },
+        startup: {
+          typeset: false,
+        },
+      };
+    </script>
+    <script
+      id="MathJax-script"
+      async
+      src="js/libs/mathjax/tex-mml-chtml.js"
+    ></script>
   </body>
 </html>

@@ -1,68 +1,157 @@
-const API_KEY = "";
-const submitButton = document.querySelector("#submit");
-const outPutElement = document.querySelector("#output");
-const inPutElement = document.querySelector("input");
-const historyElement = document.querySelector(".history");
-const buttonElement = document.querySelector("button");
+import { sanitizeMathContent } from "./textParser.js";
+import { marked } from "./libs/marked/marked.esm.js";
 
-function changeInput(value) {
-  const inputElement = document.querySelector("input");
-  inputElement.value = value;
-}
+const sendButton = document.querySelector("#send-message-button");
+const input = document.querySelector("input");
+const output = document.querySelector("#output");
+const chatSection = document.querySelector("#chat-section");
 
 async function getMessage() {
-  console.log(
-    `Button clicked: Fetching message from API with input: ${inPutElement.value}`
-  );
+  const userMessage = input.value.trim();
+  if (!userMessage) return;
+
+  // Agrega el mensaje del usuario al historial
+  addMessage("user", userMessage);
+
+  // Crear el contenedor del mensaje del asistente
+  const loadingMessage = addMessage("assistant", "");
+  loadingMessage.classList.add("loading");
 
   const options = {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${API_KEY}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "gpt-3.5-turbo",
+      model: "microsoft/phi-4",
       messages: [
         {
           role: "user",
-          content: inPutElement.value,
+          content: userMessage,
         },
       ],
-      max_tokens: 100,
+      max_tokens: 540,
+      stream: true,
     }),
   };
 
   try {
     const response = await fetch(
-      "https://api.openai.com/v1/chat/completions",
+      "http://127.0.0.1:1234/v1/chat/completions",
       options
     );
-    const data = await response.json();
 
-    console.log(`API response received: `, data);
-    outPutElement.textContent = data.choices[0].message.content;
+    if (!response.ok || !response.body) {
+      throw new Error("La respuesta no es válida.");
+    }
 
-    if (data.choices[0].message.content && inPutElement.value) {
-      const pElement = document.createElement("p");
-      pElement.textContent = inPutElement.value;
-      pElement.addEventListener("click", () =>
-        changeInput(pElement.textContent)
-      );
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
 
-      historyElement.append(pElement);
-      console.log(`Added to history: ${inPutElement.value}`);
+    let assistantReply = "";
+    let firstChunkReceived = false;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+
+      const lines = chunk
+        .split("\n")
+        .filter((line) => line.trim().startsWith("data:"));
+
+      for (const line of lines) {
+        const jsonStr = line.replace(/^data:\s*/, "");
+
+        if (jsonStr === "[DONE]") break;
+
+        try {
+          const parsed = JSON.parse(jsonStr);
+          const content = parsed.choices?.[0]?.delta?.content;
+
+          if (content) {
+            assistantReply += content;
+            const cleaned = sanitizeMathContent(assistantReply, {
+              sanitize: false,
+            });
+
+            loadingMessage.innerHTML = marked.parse(cleaned);
+            hljs.highlightAll();
+
+            labelCodeBlocks(loadingMessage);
+            scrollToBottom();
+
+            // Quitar clase "loading" al recibir el primer fragmento
+            if (!firstChunkReceived) {
+              firstChunkReceived = true;
+              loadingMessage.classList.remove("loading");
+            }
+
+            // Render LaTeX si aplica
+            if (window.MathJax) {
+              await MathJax.typesetClear([loadingMessage]);
+              await MathJax.typesetPromise([loadingMessage]);
+              scrollToBottom();
+            }
+          }
+        } catch (e) {
+          console.warn("Error al parsear JSON del stream:", e);
+        }
+      }
     }
   } catch (error) {
-    console.error(`Error fetching message from API:`, error);
+    console.error("Error:", error);
+    loadingMessage.textContent = "Error al obtener respuesta.";
+    loadingMessage.classList.remove("loading");
   }
+
+  input.value = "";
 }
 
-submitButton.addEventListener("click", getMessage);
+function addMessage(role, text) {
+  const messageEl = document.createElement("div");
+  messageEl.classList.add("message", role);
 
-function clearInput() {
-  console.log(`Input cleared.`);
-  inPutElement.value = "";
+  const contentEl = document.createElement("div");
+  contentEl.classList.add("message-content");
+  contentEl.textContent = text;
+
+  messageEl.appendChild(contentEl);
+  output.appendChild(messageEl);
+
+  scrollToBottom();
+  return contentEl;
 }
 
-buttonElement.addEventListener("click", clearInput);
+// Desplazar hacia abajo para mostrar el nuevo mensaje
+function scrollToBottom() {
+  chatSection.scrollTop = chatSection.scrollHeight;
+}
+
+function labelCodeBlocks(context = document) {
+  context.querySelectorAll("pre code").forEach((codeBlock) => {
+    const pre = codeBlock.parentElement;
+
+    // Verificar si ya tiene etiqueta de lenguaje
+    if (pre.querySelector(".lang-label")) return;
+
+    const className = codeBlock.className;
+    const match = className.match(/language-(\w+)/);
+    if (match) {
+      const lang = match[1].toUpperCase();
+
+      const label = document.createElement("div");
+      label.className = "lang-label";
+      label.textContent = lang;
+
+      pre.style.position = "relative";
+      pre.insertBefore(label, codeBlock);
+    }
+  });
+}
+
+sendButton.addEventListener("click", getMessage);
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") getMessage();
+});
